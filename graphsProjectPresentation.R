@@ -1,4 +1,4 @@
-#this is the third script for this project
+
 #I want to make graphs for the project presentation
 
 #load cleaned data from CleanDataProject script 
