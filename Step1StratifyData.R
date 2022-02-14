@@ -3,11 +3,11 @@ library(dplyr)
 
 #this is the first script for the porject
 
-
 #############
 #INPUT FILES
 #############
 #this .csv comes from the `getTrialData.sql` script. 
+#import all of the data from the MIMIC db 
 sqlData <- read.csv(paste0("/Bigdata/Dropbox (Technion Dropbox)/Rina_Benel/Home/MachineLearningMedicine/data/TrialDataIncludeICUid.csv"), 
                     sep = ",", header = T, stringsAsFactors = T) #stringsAsFactors prevents strings being converted to factors
 
@@ -17,17 +17,17 @@ vasopressor <- read.csv(paste0("/Bigdata/Dropbox (Technion Dropbox)/Rina_Benel/H
 ventilation <- read.csv(paste0( "/Bigdata/Dropbox (Technion Dropbox)/Rina_Benel/Home/MachineLearningMedicine/data/repository/durations/ventilation-durations.csv"),
                         sep = ",", header = T, stringsAsFactors = T)
 
-#SOL scores
-#this is from the repository that willie shared with me 
+#Severity scores
+#this is from the repository that willie shared with me from his research 
 sofa <- read.csv(paste0("/Bigdata/Dropbox (Technion Dropbox)/Rina_Benel/Home/MachineLearningMedicine/data/repository/severityscores/sofa.csv"))
 sapsii <- read.csv(paste0("/Bigdata/Dropbox (Technion Dropbox)/Rina_Benel/Home/MachineLearningMedicine/data/repository/severityscores/sapsii.csv"))
 
-#uri suggesed that I look at what willie did?
 #We want to add this vasopressor data to our sqlData 
+#add the correct columns to our trail data 
 subsetVasopressor <- vasopressor[ , names(vasopressor) %in% c("icustay_id", "duration_hours")]
 colnames(subsetVasopressor) <- c("icustay_id", "vasopressor_duration")
 
-#We want to add this ventilation score to our sqlData 
+#We also want to add this ventilation score to our sqlData 
 subsetVentilation <- ventilation[ , names(ventilation) %in% c("icustay_id", "duration_hours")]
 colnames(subsetVentilation) <- c("icustay_id", "ventillation_duarion")
 
@@ -40,6 +40,7 @@ durartionData <- sql_durationData[complete.cases(sql_durationData), ]
 ##################
 ##SEVERITY SCORES
 ##################
+#two types of severity scores, sofa and sapsii
 #We want to add this sofa score to our sqlData 
 subsetSofa <- sofa[ , names(sofa) %in% c("subject_id", "sofa")]
 
@@ -49,7 +50,7 @@ subsetSapsii <- sapsii[ , names(sapsii) %in% c("subject_id", "sapsii")]
 #join the two dfs togther
 SOL_durartionData <- durartionData %>% left_join(subsetSofa, by = "subject_id") %>% left_join(subsetSapsii, by = "subject_id")
 
-#Dany says it is best to sort by first admit. 
+#Research has determined it is best to sort by first admit. 
 orderDurartionData <- SOL_durartionData[order(SOL_durartionData$first_admittime, SOL_durartionData$icustay_id), ]
 
 #get only the first ordered row per icustay_id, so this would mean taking the longest los
@@ -59,15 +60,15 @@ nrow(uniqueData)
 #########################
 #LANGUAGE - ENGL AND NON
 #########################
-#binary language, english V. all the rest 
+#binary language, English V. all the rest 
 uniqueData$binaryLang <- as.factor(ifelse(uniqueData$language == "ENGL", "ENGL", "NON_ENGL"))
 
-
 ####################
-#Risk Startification
+#Risk Stratification
 ###################
 uniqueData$cutSAPSII <- cut(uniqueData$sapsii, breaks = 3, labels = c("low", "medium", "high"))
 
+#cut the data into unqiue sets depending on risk
 uniqueData$WilliecutSAPSII <- cut(uniqueData$sapsii, 
                                 breaks = c(0, 37, 48, 118), 
                                 labels = c("low", "medium", "high"))
@@ -118,14 +119,14 @@ wilcox.test(EngSpeakers$ventillation_duarion, NonEngSpeakers$ventillation_duario
 # alternative hypothesis: true location shift is not equal to 0
 
 #######################
-#Plot cummaltive prob
+#Plot cumulative prob
 ######################
 #try to add inlets with the coor_cartesian? 
 typesRisk <- c("low", "medium", "high")
 
 for(i in typesRisk) {
   
-  #seperate the data per insurance
+  #separate the data per insurance
   subsetUniqueData <- uniqueData[uniqueData$WilliecutSAPSII == i, ]
   
   subsetUniqueDataGraph <- subsetUniqueData %>% group_by(WilliecutSAPSII, binaryLang) %>% 
