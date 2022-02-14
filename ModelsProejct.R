@@ -3,7 +3,6 @@ library(stargazer) #for pvalue for the multinom glm
 library(knitr)
 library(quantreg) #for quantile regression
 
-#this is the second script for this project
 
 #load cleaned data from CleanDataProject script 
 load(file = paste0("/Bigdata/Dropbox (Technion Dropbox)/Rina_Benel/Home/MachineLearningMedicine/results/cleanData.RData"))
