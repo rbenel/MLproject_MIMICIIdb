@@ -1,3 +1,7 @@
-#MIMICII DB
+# MIMICII DB
 
-this is a test, test #2
+Project completed as part of the course requirments for "Machine Learning:Medicine"
+
+Order of the analysis 
+
+### 
