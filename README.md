@@ -6,11 +6,12 @@ Order of the analysis
 
 ### Step 1:`getTrailData.sql`
 
-### Step 2:`CleanDataProject.R`
+### Step 2:`CleanDataProject.R` and `StratifyVasoVentData.R`
 
 ### Step 3:`ModelsProject.R`
 
-### Step 4:`StratifyVasoVentData.R`
+#### Step 4:`graphsProjectPresentation.R`
 
-### Step 5:
+
+### Additional Scripts: `linearRegressionModel.R`, `randomForest.R`, 
 
