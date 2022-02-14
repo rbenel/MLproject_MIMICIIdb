@@ -4,6 +4,13 @@ Project completed as part of the course requirments for "Machine Learning:Medici
 
 Order of the analysis 
 
-### Step 1 `getTrailData.sql`
+### Step 1:`getTrailData.sql`
 
-### Step 2: `Step1StratifyData.R`
+### Step 2:`CleanDataProject.R`
+
+### Step 3:`ModelsProject.R`
+
+### Step 4:`StratifyVasoVentData.R`
+
+### Step 5:
+
